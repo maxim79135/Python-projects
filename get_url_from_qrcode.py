@@ -8,7 +8,7 @@ def get_images_from_pdf(filename):
     """Retrieves images from pdf file.
 
     Args:
-        filenma: string
+        filename: string
 
     Returns:
         :obj:`list` of :obj:`Pixmap`.
@@ -37,14 +37,18 @@ def read_qrcode(imgs):
         :obj:`string` (string).
     """
     for pix in imgs:
-        if pix.width == pix.height == 300:
-            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-            qrcode = decode(img)[0]
-            return str(qrcode.data.decode())
+        if pix.samples == None:
+            continue
+        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        qrcode = decode(img)
+        if qrcode == []:
+            continue
+        else:
+            return str(qrcode[0].data.decode())
 
 
 if __name__ == "__main__":
-    filename = "resources\\sdv.pdf"
+    filename = "resources\\test.pdf"
     images = get_images_from_pdf(filename=filename)
     url = read_qrcode(images)
     print(url)

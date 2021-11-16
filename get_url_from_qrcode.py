@@ -34,12 +34,16 @@ def read_qrcode(imgs):
         imgs: 'list' (Pixmap)
 
     Returns:
-        :obj:`string` (string).
+        :obj:`string` (string) if image contain qrcode
+        else None.
     """
     for pix in imgs:
-        if pix.samples == None:
+        if pix.samples == None or pix.colorspace.name != "DeviceRGB":
             continue
-        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        try:
+            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        except:
+            continue
         qrcode = decode(img)
         if qrcode == []:
             continue
@@ -48,7 +52,12 @@ def read_qrcode(imgs):
 
 
 if __name__ == "__main__":
-    filename = "resources\\test.pdf"
-    images = get_images_from_pdf(filename=filename)
-    url = read_qrcode(images)
-    print(url)
+    filename = "resources\\p0-6.png"
+    if filename.split(".")[-1] in ["png", "jpg"]:
+        image = fitz.Pixmap(filename)
+        url = read_qrcode([image])
+        print(url)
+    else:
+        images = get_images_from_pdf(filename=filename)
+        url = read_qrcode(images)
+        print(url)

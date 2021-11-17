@@ -1,8 +1,10 @@
+#!/usr/bin/env python
 import fitz
 import cv2
 from PIL import Image
 from pyzbar.pyzbar import decode
-
+import sys
+import os
 
 def get_images_from_pdf(filename):
     """Retrieves images from pdf file.
@@ -49,15 +51,23 @@ def read_qrcode(imgs):
             continue
         else:
             return str(qrcode[0].data.decode())
+    return ""
 
 
 if __name__ == "__main__":
-    filename = "resources\\p0-6.png"
-    if filename.split(".")[-1] in ["png", "jpg"]:
-        image = fitz.Pixmap(filename)
-        url = read_qrcode([image])
-        print(url)
+    args = sys.argv[1:]
+    if len(args) < 1:
+        print("")
     else:
-        images = get_images_from_pdf(filename=filename)
-        url = read_qrcode(images)
-        print(url)
+        filename = args[0]
+        if not os.path.exists(filename):
+            print("")
+        else:
+            if filename.split(".")[-1] in ["png", "jpg"]:
+                image = fitz.Pixmap(filename)
+                url = read_qrcode([image])
+                print(url)
+            else:
+                images = get_images_from_pdf(filename=filename)
+                url = read_qrcode(images)
+                print(url)

@@ -6,6 +6,7 @@ from pyzbar.pyzbar import decode
 import sys
 import os
 
+
 def get_images_from_pdf(filename):
     """Retrieves images from pdf file.
 
@@ -63,11 +64,10 @@ if __name__ == "__main__":
         if not os.path.exists(filename):
             print("")
         else:
+            images = []
             if filename.split(".")[-1] in ["png", "jpg"]:
-                image = fitz.Pixmap(filename)
-                url = read_qrcode([image])
-                print(url)
+                images = [fitz.Pixmap(filename)]
             else:
                 images = get_images_from_pdf(filename=filename)
-                url = read_qrcode(images)
-                print(url)
+            url = read_qrcode(images)
+            print(url)
